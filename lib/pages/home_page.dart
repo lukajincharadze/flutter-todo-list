@@ -14,9 +14,10 @@ class _HomePageState extends State<HomePage> {
   List<Widget> getTodoWidgets() {
     List<Widget> temp = [];
 
-    for (int i = 0; i< todos.length; i++) {
+    for (int i = 0; i < todos.length; i++) {
       temp.add(Text(todos[i]));
     }
+
     return temp;
   }
 
