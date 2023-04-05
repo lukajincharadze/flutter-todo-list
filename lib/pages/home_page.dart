@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo/data_models/todo.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -8,8 +9,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final todoInputController = TextEditingController();
-  final List<String> todos = [];
+  final titleController = TextEditingController();
+  final descriptionController = TextEditingController();
+  final List<Todo> todos = [];
 
   List<Widget> getTodoWidgets() {
     List<Widget> temp = [];
@@ -27,34 +29,43 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text("Todo"),
       ),
-      body: Column(
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 200,
-                child: TextField(
-                  controller: todoInputController,
-                ),
+      body: Container(
+        margin: EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          children: [
+            TextField(
+              controller: titleController,
+              decoration: const InputDecoration(
+                  hintText: "title"
               ),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    todos.add(todoInputController.text);
-                    todoInputController.clear();
-                  });
-                },
-                child: Text("Add"),
-              )
-            ],
-          ),
-          Container(
+            ),
+            TextField(
+              controller: descriptionController,
+              decoration: const InputDecoration(
+                  hintText: "description"
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  todos.add(Todo(title: titleController.text,
+                    description: descriptionController.text,),)
+                  ,
+                });
+              },
+              child: Text("Add"),
+            )
+          ],
+
+          SizedBox(
             height: 200,
             child: ListView(
               children: getTodoWidgets(),
             ),
           ),
-        ],
+
+          ],
+        ),
       ),
     );
   }
