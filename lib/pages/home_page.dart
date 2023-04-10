@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:todo/data_models/todo.dart';
+import 'package:todo/database/database_helper.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -8,18 +10,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final todoInputController = TextEditingController();
-  final List<String> todos = [];
-
-  List<Widget> getTodoWidgets() {
-    List<Widget> temp = [];
-
-    for (int i = 0; i < todos.length; i++) {
-      temp.add(Text(todos[i]));
-    }
-
-    return temp;
-  }
+  final titleController = TextEditingController();
+  final descriptionController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -27,29 +19,72 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text("Todo"),
       ),
-      body: Column(
-        children: [
-          Row(
+      body: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16),
+        child: SingleChildScrollView(
+          child: Column(
             children: [
-
+              TextField(
+                controller: titleController,
+                decoration: const InputDecoration(hintText: "item to buy"),
+              ),
+              TextField(
+                controller: descriptionController,
+                decoration: const InputDecoration(hintText: "description"),
+              ),
               ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    todos.add(todoInputController.text);
-                    todoInputController.clear();
-                  });
+                onPressed: () async {
+                  await DatabaseHelper().insertTodo(
+                    Todo(
+                      title: titleController.text,
+                      description: descriptionController.text,
+                    ),
+                  );
+                  setState(() {});
+                  titleController.clear();
+                  descriptionController.clear();
                 },
-                child: Text("Add"),
-              )
+                child: const Text("Add to list"),
+              ),
+              SizedBox(
+                height: 400,
+                child: FutureBuilder<List<Todo>>(
+                  future: DatabaseHelper().getTodos(),
+                  builder: (context, snapshot) {
+                    final todos = snapshot.data ?? [];
+                    return ListView.builder(
+                        itemCount: todos.length,
+                        itemBuilder: (context, index) {
+                          final todo = todos[index];
+                          return Container(
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(8)),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    blurRadius: 5,
+                                    offset: const Offset(5, 5),
+                                    spreadRadius: 2,
+                                  )
+                                ]),
+                            child: ListTile(
+                              title: Text(todo.title),
+                              subtitle: Text(todo.description),
+                            ),
+                          );
+                        });
+                  },
+                ),
+              ),
             ],
           ),
-          Container(
-            height: 200,
-            child: ListView(
-              children: getTodoWidgets(),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
