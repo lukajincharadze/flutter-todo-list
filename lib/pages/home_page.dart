@@ -26,7 +26,7 @@ class _HomePageState extends State<HomePage> {
             children: [
               TextField(
                 controller: titleController,
-                decoration: const InputDecoration(hintText: "item to buy"),
+                decoration: const InputDecoration(hintText: "Item to buy"),
               ),
               TextField(
                 controller: descriptionController,
@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage> {
                             decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius:
-                                    const BorderRadius.all(Radius.circular(8)),
+                                const BorderRadius.all(Radius.circular(8)),
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.grey.withOpacity(0.5),
@@ -76,6 +76,13 @@ class _HomePageState extends State<HomePage> {
                             child: ListTile(
                               title: Text(todo.title),
                               subtitle: Text(todo.description),
+                              trailing: IconButton(
+                                onPressed: () async {
+                                  await DatabaseHelper().deleteTodo(todo.id!);
+                                  setState(() {});
+                                },
+                                icon: const Icon(Icons.delete),
+                              ),
                             ),
                           );
                         });
